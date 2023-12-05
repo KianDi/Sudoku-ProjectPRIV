@@ -25,4 +25,7 @@ class Cell:
         if self.selected:
             color = (255, 0, 0)
             pygame.draw.rect(self.screen, color, pygame.rect(self.col * 100 - 100, self.row * 100 - 100, self.col * 100, self.row * 100), 3)
+        else:
+            color = (0, 0, 0)
+            pygame.draw.rect(self.screen, color, pygame.rect(self.col * 100 - 100, self.row * 100 - 100, self.col * 100, self.row * 100), 3)
 
