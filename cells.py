@@ -14,8 +14,10 @@ class Cell:
         self.sketched_value = value
 
     def draw(self):
-        if self.sketched_value != 0:
+        if self.value == 0 and self.sketched_value != 0:
             print(self.sketched_value)
+        elif self.value != 0:
+            print(self.value)
 
 
 
