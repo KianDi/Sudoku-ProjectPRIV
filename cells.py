@@ -1,3 +1,4 @@
+import pygame
 class Cell:
 
     sketched_value = 0
@@ -6,6 +7,7 @@ class Cell:
         self.row = row
         self.col = col
         self.screen = screen
+        self.selected = True
 
     def set_cell_value(self, value):
         self.value = value
@@ -20,6 +22,7 @@ class Cell:
             self.screen.blit(self.sketched_value, corner)
         elif self.value != 0:
             self.screen.blit(self.value, center)
-
-
+        if self.selected:
+            color = (255, 0, 0)
+            pygame.draw.rect(self.screen, color, pygame.rect(self.col * 100 - 100, self.row * 100 - 100, self.col * 100, self.row * 100))
 
