@@ -28,7 +28,7 @@ class Cell:
         self.sketched_value = value
 
     def draw(self):
-        center = (self.col * 100 - 50, self.row * 100 - 50)
+        center = ((self.col + 1) * 100 - 50, (self.row + 1) * 100 - 50)
         corner = (self.col * 100 - 75, self.row * 100 - 75)
 
         # Draw the red outline for the selected cell
@@ -52,6 +52,7 @@ class Cell:
             color = (0, 0, 0)
         pygame.draw.rect(self.screen, color,
                          pygame.Rect(self.col * 100 - 100, self.row * 100 - 100, self.col * 100, self.row * 100), 3)
+
 class SudokuGenerator:
     def __init__(self, row_length, removed_cells):
         self.row_length = row_length
@@ -349,6 +350,7 @@ def start_sudoku(difficulty, screen):
                 x, y = event.pos
                 selected_row, selected_col = sudoku_board.click(x, y)
                 sudoku_board.select(selected_row, selected_col)
+                print(selected_row, selected_col)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     sudoku_board.clear()
