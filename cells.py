@@ -8,6 +8,8 @@ class Cell:
         self.col = col
         self.screen = screen
         self.selected = False
+        self.width = 100
+        self.height = 100
 
     def set_cell_value(self, value):
         self.value = value
@@ -16,13 +18,15 @@ class Cell:
         self.sketched_value = value
 
     def draw(self):
-        valueSurface = Font.font()
+        valueFont = pygame.font.Font(None, 50)
+        valueSurf = valueFont.render(str(self.value), False, (0,0,0), (255,255,255))
+        sketchSurf = valueFont.render(str(self.sketched_value), False, (0,0,0), (255,255,255))
         center = (self.col * 100-50, self.row*100-50)
         corner = (self.col * 100-75, self.row*100-75)
         if self.value == 0 and self.sketched_value != 0:
-            self.screen.blit(self.sketched_value, corner)
+            self.screen.blit(sketchSurf, corner)
         elif self.value != 0:
-            self.screen.blit(self.value, center)
+            self.screen.blit(valueSurf, center)
         if self.selected:
             color = (255, 0, 0)
             pygame.draw.rect(self.screen, color, pygame.rect(self.col * 100 - 100, self.row * 100 - 100, self.col * 100, self.row * 100), 3)
