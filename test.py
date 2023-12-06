@@ -2,6 +2,8 @@ import math, random
 
 import pygame
 
+import cells
+
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
 https://www.geeksforgeeks.org/program-sudoku-generator/
@@ -167,7 +169,7 @@ class Board:
 
     def draw(self):
         # Draw Sudoku grid outline with bold lines for 3x3 boxes
-        bold_line_thickness = 1
+        bold_line_thickness = 5
         box_line_thickness = 1
 
         for i in range(1, 10):
@@ -184,9 +186,7 @@ class Board:
         # Draw 3x3 box outlines
         for i in range(1, 3):
             for j in range(1, 3):
-                pygame.draw.rect(self.screen, (0, 0, 0), (
-                j * self.width / 3 - bold_line_thickness, i * self.height / 3 - bold_line_thickness,
-                self.width / 3 + bold_line_thickness, self.height / 3 + bold_line_thickness), bold_line_thickness)
+                pass
 
         # Draw each cell on the board
         for row in self.cells:
@@ -261,7 +261,7 @@ class Board:
                     return False  # There is an empty cell
 
                 # Check if the current cell's value is valid in its row, column, and box
-                if not self.is_valid(i, j, self.cells[i][j].value):
+                if not SudokuGenerator.is_valid(self, i, j, self.cells[i][j].value):
                     return False
         return True
 
@@ -276,13 +276,19 @@ class Board:
                 if 150 <= x <= 300:
                     if 200 <= y <= 250:
                         difficulty = "easy"
+                        sudoku_board = generate_sudoku(9, 30)
+                        draw_game_screen(screen, sudoku_board)
+                        pygame.display.flip()
+
                     elif 270 <= y <= 320:
                         difficulty = "medium"
+                        sudoku_board = generate_sudoku(9, 40)
+                        draw_game_screen(screen, sudoku_board)
+                        pygame.display.flip()
+
                     elif 340 <= y <= 390:
                         difficulty = "hard"
-
-                    if difficulty:
-                        sudoku_board.cells = generate_sudoku(9, {"easy": 30, "medium": 40, "hard": 50}[difficulty])
+                        sudoku_board = generate_sudoku(9, 50)
                         draw_game_screen(screen, sudoku_board)
                         pygame.display.flip()
 
@@ -375,7 +381,7 @@ def main():
     sudoku_board = Board(width=screen_width, height=screen_height, screen=screen, difficulty="easy")
 
     # Set the initial screen
-    current_screen = "start"
+
 
     # Game loop
     game_running = False  # Flag to indicate whether the game is in progress
@@ -422,7 +428,7 @@ def main():
                 draw_start_screen(screen)
             elif not game_over:
                 draw_game_screen(screen, sudoku_board)
-            else:
+            elif game_over:
                 draw_game_over_screen(screen, is_winner=True)  # You can set is_winner based on the win condition
 
             # Update the display
