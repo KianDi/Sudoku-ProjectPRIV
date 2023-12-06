@@ -76,3 +76,4 @@ class Board:
                 if not self.cells[i][j].is_valid():
                     return False
         return True
+

@@ -28,7 +28,7 @@ class SudokuGenerator:
         return True
     def is_valid(self, row, col, num):
         return(self.valid_in_row(row, num) and self.valid_in_col(col, num)
-               and self.valid_in_box(row - row % self.box_length, col - col % self.box_length)
+               and self.valid_in_box(row - row % self.box_length, col - col % self.box_length))
     def fill_box(self, row_start, col_start):
         numbers = list(range(1, 10))
         random.shuffle(numbers)
