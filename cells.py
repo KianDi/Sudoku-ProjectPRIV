@@ -16,6 +16,7 @@ class Cell:
         self.sketched_value = value
 
     def draw(self):
+        valueSurface = Font.font()
         center = (self.col * 100-50, self.row*100-50)
         corner = (self.col * 100-75, self.row*100-75)
         if self.value == 0 and self.sketched_value != 0:

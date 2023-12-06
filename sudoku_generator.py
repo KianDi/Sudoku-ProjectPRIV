@@ -28,7 +28,7 @@ class SudokuGenerator:
         return True
     def is_valid(self, row, col, num):
         return(self.valid_in_row(row, num) and self.valid_in_col(col, num)
-               and self.valid_in_box(row - row % self.box_length, col - col % self.box_length))
+               and self.valid_in_box(row - row % self.box_length, col - col % self.box_length, num))
     def fill_box(self, row_start, col_start):
         numbers = list(range(1, 10))
         random.shuffle(numbers)
@@ -77,15 +77,15 @@ class SudokuGenerator:
         cells_to_remove = self.removed_cells
         while cells_to_remove > 0:
             row = random.randint(0, self.row_length - 1)
-            col = random.randint(0, self.col_length - 1)
+            col = random.randint(0, self.row_length - 1)
             if self.board[row][col] != 0:
                 self.board[row][col] = 0
                 cells_to_remove -= 1
 
-    def generate_sudoku(size, removed):
-        sudoku = SudokuGenerator(size, removed)
-        sudoku.fill_values()
-        board = sudoku.get_board()
-        sudoku.remove_cells()
-        board = sudoku.get_board()
-        return board
+def generate_sudoku(size, removed):
+    sudoku = SudokuGenerator(size, removed)
+    sudoku.fill_values()
+    board = sudoku.get_board()
+    sudoku.remove_cells()
+    board = sudoku.get_board()
+    return board
