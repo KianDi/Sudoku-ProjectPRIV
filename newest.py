@@ -319,25 +319,55 @@ class Board:
                     if board.selected_cell:
                         row, col = board.selected_cell.row, board.selected_cell.col
                         board.select(row, (col + 1) % 9)
-    def valid_in_row(self, row, num):
-        return num not in self.cells[row]
+    def valid_in_row(self):
+        for i in range(0,9):
+            listCheck = []
+            for j in range(0,9):
+                listCheck.append(self.cells[i][j].value)
+            listCheck = set(listCheck)
+            if len(listCheck) < 9:
+                return False
+        return True
 
-    def valid_in_col(self, col, num):
-        return num not in [row[col] for row in self.cells]
-        return
+    def valid_in_col(self):
+        for i in range (0,9):
+            listCheck = []
+            for j in range(0,9):
+                listCheck.append(self.cells[j][i].value)
+            listCheck = set(listCheck)
+            if len(listCheck) < 9:
+                return False
+        return True
 
-    def valid_in_box(self, row_start, col_start, num):
-        for i in range(9):
-            for j in range(9):
-                if self.cells[row_start + i][col_start + j].value == num:
+
+    def valid_in_box(self):
+        for k in range(1, 4):
+            for i in range(0, 3):
+                list = []
+                for j in range(0,3):
+                    list.append(self.cells[i*k][j].value)
+                list = set(list)
+                if len(list) < 9:
+                    return False
+                list = []
+                for j in range(3, 6):
+                    list.append(self.cells[i*k][j].value)
+                list = set(list)
+                if len(list) < 9:
+                    return False
+                list = []
+                for j in range(6, 9):
+                    list.append(self.cells[i*k][j].value)
+                list = set(list)
+                if len(list) < 9:
                     return False
         return True
 
-    def is_valid(self, row, col, num):
+    def is_valid(self):
         return (
-                Board.valid_in_row(self, row, num)
-                and Board.valid_in_col(self, col, num)
-                and Board.valid_in_box(self, row - row % self.box_length, col - col % self.box_length, num)
+                Board.valid_in_row(self)
+                and Board.valid_in_col(self)
+
         )
 
 
@@ -440,7 +470,7 @@ def start_sudoku(difficulty, screen):
 
     # Generate Sudoku board based on difficulty
     if difficulty == "easy":
-        removed_cells = 30  # Adjust the number of removed cells based on the difficulty level
+        removed_cells = 1  # Adjust the number of removed cells based on the difficulty level
     elif difficulty == "medium":
         removed_cells = 40
     elif difficulty == "hard":
@@ -494,11 +524,13 @@ def start_sudoku(difficulty, screen):
                     sudoku_board.select(selected_row, selected_col)
 
             if Board.is_full(sudoku_board):
-                print("board is full")
-                if not Board.check_board(sudoku_board):
-                    print("we lost")
-                if Board.check_board(sudoku_board):
-                    print("We won")
+
+                if not Board.is_valid(sudoku_board):
+                    screen.fill((255, 255, 255))
+                    draw_game_over_lost_screen(screen)
+                else:
+                    screen.fill((255, 255, 255))
+                    draw_game_over_won_screen(screen)
 
 
 

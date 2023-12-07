@@ -316,7 +316,7 @@ class Board:
                 elif event.key == pygame.K_RIGHT:
                     if board.selected_cell:
                         row, col = board.selected_cell.row, board.selected_cell.col
-                        board.select(row, (col + 1) % 9)
+                        board.select(row, (col + 1))
 
 
 def draw_start_screen(screen):
