@@ -324,7 +324,10 @@ class Board:
                         row, col = board.selected_cell.row, board.selected_cell.col
                         board.select(row, (col + 1) % 9)
 
-
+WIDTH = 450
+HEIGHT = 450
+BG_COLOR = (255, 255, 255)
+LINE_COLOR = (100, 100, 100)
 def draw_start_screen(screen):
     # Draw the start screen
     font = pygame.font.Font(None, 36)
@@ -333,28 +336,63 @@ def draw_start_screen(screen):
     screen.blit(text, text_rect)
 
 
-def draw_game_screen(screen, sudoku_board):
-    # Draw the Sudoku board
-    screen.fill((255, 255, 255))  # Fill screen with white background
+def draw_game_start(screen):
+    start_title_font = pygame.font.Font(None, 100)
+    button_font = pygame.font.Font(None, 70)
+    game_option_font = pygame.font.Font(None, 50)
 
-    # Implement the drawing logic for the Game screen
-    # Display the Sudoku board and any other relevant information
-    sudoku_board.draw()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                if easy_rectangle.collidepoint(x, y):
+                    start_sudoku("easy", screen)
+                    return
+                elif medium_rectangle.collidepoint(x, y):
+                    start_sudoku("medium", screen)
+                    return
+                elif hard_rectangle.collidepoint(x, y):
+                    start_sudoku("hard", screen)
 
-    # Add code to draw buttons, messages, or other elements specific to the game screen
-    font = pygame.font.Font(None, 24)
-    text = font.render('', True, (0, 0, 0))
-    screen.blit(text, (20, 20))
+        screen.fill(BG_COLOR)
+        title_surface = start_title_font.render("Welcome to Sudoku", 0, LINE_COLOR)
+        title_rectangle = title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 150))
+        screen.blit(title_surface, title_rectangle)
+        button_text = button_font.render("Select Game Mode:", 0, (255, 255, 255))
+        easy_text = game_option_font.render("Easy", 0, (255, 255, 255))
+        medium_text = game_option_font.render("Medium", 0, (255, 255, 255))
+        hard_text = game_option_font.render("Hard", 0, (255, 255, 255))
 
-    # Update the Sudoku board with the initial values
-    for i in range(9):
-        for j in range(9):
-            value = sudoku_board.cells[i][j].get_value()
-            if value != 0:
-                font = pygame.font.Font(None, 36)
-                text = font.render(str(value), True, (0, 0, 0))
-                center = (j * sudoku_board.width // 9 + 35, i * sudoku_board.height // 9 + 35)
-                screen.blit(text, center)
+        button_surface = pygame.Surface((button_text.get_size()[0] + 20, button_text.get_size()[1] + 20))
+        button_surface.fill(LINE_COLOR)
+        button_surface.blit(button_text, (10, 10))
+
+        easy_surface = pygame.Surface((easy_text.get_size()[0] + 20, easy_text.get_size()[1] + 20))
+        easy_surface.fill(LINE_COLOR)
+        easy_surface.blit(easy_text, (10, 10))
+
+        medium_surface = pygame.Surface((medium_text.get_size()[0] + 20, medium_text.get_size()[1] + 20))
+        medium_surface.fill(LINE_COLOR)
+        medium_surface.blit(medium_text, (10, 10))
+
+        hard_surface = pygame.Surface((hard_text.get_size()[0] + 20, hard_text.get_size()[1] + 20))
+        hard_surface.fill(LINE_COLOR)
+        hard_surface.blit(hard_text, (10, 10))
+
+        button_rectangle = button_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+        easy_rectangle = easy_surface.get_rect(center=(WIDTH // 3, HEIGHT // 2 + 150))
+        medium_rectangle = medium_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 150))
+        hard_rectangle = hard_surface.get_rect(center=(WIDTH // 1.5, HEIGHT // 2 + 150))
+
+        screen.blit(button_surface, button_rectangle)
+        screen.blit(easy_surface, easy_rectangle)
+        screen.blit(medium_surface, medium_rectangle)
+        screen.blit(hard_surface, hard_rectangle)
+
+        pygame.display.flip()
 
 
 def draw_game_over_screen(screen, is_winner):
@@ -368,78 +406,72 @@ def draw_game_over_screen(screen, is_winner):
     screen.blit(text, text_rect)
 
 
-def main():
+def start_sudoku(difficulty, screen):
     pygame.init()
+    pygame.display.set_caption("Sudoku")
 
-    # Set up the screen
-    screen_width = 450
-    screen_height = 450
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Sudoku Game")
+    # Initialize the Board
+    sudoku_board = Board(WIDTH, HEIGHT, screen, difficulty)
 
-    # Create a Sudoku board
-    sudoku_board = Board(width=screen_width, height=screen_height, screen=screen, difficulty="easy")
+    # Generate Sudoku board based on difficulty
+    if difficulty == "easy":
+        removed_cells = 30  # Adjust the number of removed cells based on the difficulty level
+    elif difficulty == "medium":
+        removed_cells = 40
+    elif difficulty == "hard":
+        removed_cells = 50
 
-    # Set the initial screen
+    sudoku_values = generate_sudoku(9, removed_cells)
 
+    # Set the values of the cells in the Board instance
+    for i in range(9):
+        for j in range(9):
+            cell_value = sudoku_values[i][j]
+            sudoku_board.cells[i][j].set_cell_value(cell_value)
 
-    # Game loop
-    game_running = False  # Flag to indicate whether the game is in progress
-    game_over = False  # Flag to indicate whether the game is over (win or lose)
+    # Draw the initial state of the Sudoku board
+    sudoku_board.draw()
+    pygame.display.flip()
 
+    # Initial selection
+    selected_row, selected_col = 0, 0
+    sudoku_board.select(selected_row, selected_col)
+
+    # Continue your game loop or handle user input as needed
     while True:
-        try:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    quit()
 
-                # Handle mouse click event
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if not game_running:
-                        # Start the game when clicked on the start screen
-                        game_running = True
-                        sudoku_board = Board(width=screen_width, height=screen_height, screen=screen, difficulty="easy")
-                    else:
-                        # Handle click on the game screen
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        clicked_cell = sudoku_board.click(mouse_x, mouse_y)
-                        if clicked_cell:
-                            sudoku_board.select(*clicked_cell)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                selected_row, selected_col = sudoku_board.click(x, y)
+                print(selected_row, selected_col)
+                sudoku_board.select(selected_row, selected_col)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    sudoku_board.clear()
+                elif event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]:
+                    sudoku_board.place_number(int(event.unicode))
+                elif event.key == pygame.K_UP:
+                    selected_row = (selected_row - 1) % 9
+                    sudoku_board.select(selected_row, selected_col)
+                elif event.key == pygame.K_DOWN:
+                    selected_row = (selected_row + 1) % 9
+                    sudoku_board.select(selected_row, selected_col)
+                elif event.key == pygame.K_LEFT:
+                    selected_col = (selected_col - 1) % 9
+                    sudoku_board.select(selected_row, selected_col)
+                elif event.key == pygame.K_RIGHT:
+                    selected_col = (selected_col + 1) % 9
+                    sudoku_board.select(selected_row, selected_col)
 
-                # Handle keyboard input for sketching and placing numbers
-                if game_running and not game_over and event.type == pygame.KEYDOWN:
-                    if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7,
-                                     pygame.K_8, pygame.K_9]:
-                        sudoku_board.place_number(int(pygame.key.name(event.key)))
-                    elif event.key == pygame.K_DELETE:
-                        sudoku_board.clear()
+        pygame.display.update()
 
-            # Update logic here (e.g., check if the game is won, update board state)
-            if game_running and not game_over:
-                # Check if the game is won or lost
-                if sudoku_board.is_full() and sudoku_board.check_board():
-                    game_over = True  # Player wins
-                # You can add more conditions for losing if needed
-
-            # Draw the appropriate screen
-            screen.fill((173, 216, 230))  # Fill the screen with white
-            if not game_running:
-                draw_start_screen(screen)
-            elif not game_over:
-                draw_game_screen(screen, sudoku_board)
-            elif game_over:
-                draw_game_over_screen(screen, is_winner=True)  # You can set is_winner based on the win condition
-
-            # Update the display
-            pygame.display.flip()
-
-            # Set the frame rate
-            pygame.time.Clock().tick(60)
-
-        except Exception as e:
-            print("Exception in game loop:", e)
-
-
+# Example usage:
 if __name__ == "__main__":
-    main()
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    draw_game_start(screen)
+    start_sudoku()
