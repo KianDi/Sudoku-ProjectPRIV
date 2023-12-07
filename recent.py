@@ -239,6 +239,7 @@ LINE_COLOR = (100, 100, 100)
 
 # Function to draw the game start screen
 def draw_game_start(screen):
+
     start_title_font = pygame.font.Font(None, 100)
     button_font = pygame.font.Font(None, 70)
     game_option_font = pygame.font.Font(None, 50)
@@ -251,7 +252,9 @@ def draw_game_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 if easy_rectangle.collidepoint(x, y):
+
                     start_sudoku("easy", screen)
+                    pygame.display.flip()
                     return
                 elif medium_rectangle.collidepoint(x, y):
                     start_sudoku("medium", screen)
@@ -314,6 +317,7 @@ def draw_game_won(screen):
 
 # Function to start Sudoku
 def start_sudoku(difficulty, screen):
+    screen.fill((255, 255, 255))
     pygame.init()
     pygame.display.set_caption("Sudoku")
 
@@ -322,7 +326,7 @@ def start_sudoku(difficulty, screen):
 
     # Generate Sudoku board based on difficulty
     if difficulty == "easy":
-        removed_cells = 10  # Adjust the number of removed cells based on the difficulty level
+        removed_cells = 12  # Adjust the number of removed cells based on the difficulty level
     elif difficulty == "medium":
         removed_cells = 40
     elif difficulty == "hard":
@@ -380,4 +384,3 @@ if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     draw_game_start(screen)
-    start_sudoku()

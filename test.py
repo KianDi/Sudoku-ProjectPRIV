@@ -125,6 +125,7 @@ class Cell:
 
     def set_cell_value(self, value):
         self.value = value
+        self.draw()
 
     def set_sketched_value(self, value):
         self.sketched_value = value
@@ -337,9 +338,9 @@ def draw_start_screen(screen):
 
 
 def draw_game_start(screen):
-    start_title_font = pygame.font.Font(None, 100)
-    button_font = pygame.font.Font(None, 70)
-    game_option_font = pygame.font.Font(None, 50)
+    start_title_font = pygame.font.Font(None, 50)
+    button_font = pygame.font.Font(None, 40)
+    game_option_font = pygame.font.Font(None, 35)
 
     while True:
         for event in pygame.event.get():
@@ -383,9 +384,9 @@ def draw_game_start(screen):
         hard_surface.blit(hard_text, (10, 10))
 
         button_rectangle = button_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-        easy_rectangle = easy_surface.get_rect(center=(WIDTH // 3, HEIGHT // 2 + 150))
+        easy_rectangle = easy_surface.get_rect(center=(WIDTH // 4, HEIGHT // 2 + 150))
         medium_rectangle = medium_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 150))
-        hard_rectangle = hard_surface.get_rect(center=(WIDTH // 1.5, HEIGHT // 2 + 150))
+        hard_rectangle = hard_surface.get_rect(center=(WIDTH // 1.333, HEIGHT // 2 + 150))
 
         screen.blit(button_surface, button_rectangle)
         screen.blit(easy_surface, easy_rectangle)
@@ -407,6 +408,7 @@ def draw_game_over_screen(screen, is_winner):
 
 
 def start_sudoku(difficulty, screen):
+    screen.fill((255, 255, 255))
     pygame.init()
     pygame.display.set_caption("Sudoku")
 
